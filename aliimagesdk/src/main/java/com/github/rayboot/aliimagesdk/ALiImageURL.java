@@ -21,8 +21,9 @@ public class ALiImageURL {
     }
 
     /**
-     * 缩略
+     * 单边固定缩略
      * hh
+     * 宽度按比例处理。
      *
      * @param h 指定高度
      */
@@ -34,8 +35,9 @@ public class ALiImageURL {
     }
 
     /**
-     * 缩略
+     * 单边固定缩略
      * ww
+     * 高度按比例处理。
      *
      * @param w 指定宽度
      */
@@ -428,6 +430,7 @@ public class ALiImageURL {
     /**
      * 样式
      * !pipe1
+     *
      * @param name 样式的名称
      */
     public void setStyle(String name) {
