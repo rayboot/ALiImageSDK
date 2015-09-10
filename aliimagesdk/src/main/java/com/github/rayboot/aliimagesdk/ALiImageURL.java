@@ -115,6 +115,16 @@ public class ALiImageURL {
     }
 
     /**
+     * 倍数百分比。 小于100，即是缩小，大于100即是放大。
+     * [1,1000]
+     *
+     * @param p 缩放比例
+     */
+    public void percent(int p) {
+
+    }
+
+    /**
      * 是否对图片进行裁剪
      *
      * @param crop 0 不裁剪  1 裁剪
@@ -124,13 +134,36 @@ public class ALiImageURL {
     }
 
     /**
-     * 倍数百分比。 小于100，即是缩小，大于100即是放大。
-     * [1,1000]
-     *
-     * @param p 缩放比例
+     * 居中剪裁的图片，返回尺寸由w和h来订
      */
-    public void percent(int p) {
+    public void centerCrop() {
+        crop(true);
+        zoomPriority(1);
 
+    }
+
+    /**
+     * 居中剪裁的图片，返回尺寸由w和h来订
+     */
+    public void centerCrop(int w, int h) {
+        resize(w, h);
+        centerCrop();
+
+    }
+
+    /**
+     * 按照长边缩放
+     */
+    public void centerInside() {
+        zoomPriority(0);
+    }
+
+    /**
+     * 按照长边缩放
+     */
+    public void centerInside(int w, int h) {
+        resize(w, h);
+        centerInside();
     }
 
     /**
