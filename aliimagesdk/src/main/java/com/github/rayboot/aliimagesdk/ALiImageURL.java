@@ -1,6 +1,8 @@
 package com.github.rayboot.aliimagesdk;
 
 import android.graphics.Color;
+import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * author: rayboot  Created on 15/9/10.
@@ -8,16 +10,63 @@ import android.graphics.Color;
  */
 public class ALiImageURL {
 
+    private String url;
+    private int width = -1;
+    private int height = -1;
+    private String w;
+    private String h;
+    private String Q = "90Q";
+    private String l;
+    private String e;
+    private String p;
+    private String c;
+    private String advancedCrop;
+    private String cropRange;
+    private String circle;
+    private String rounded;
+    private String cropIndex;
+    private String fitColor;
+    private String format = ".webp";
+    private String angle;
+    private String autoRotate = "2o";
+    private String sh;
+    private String blur;
+    private String brightness;
+    private String contrast;
+    private String infoexif;
+    private String style;
+
+    public ALiImageURL(String url) {
+        url(url);
+    }
+
+    public void url(String url) {
+        if (!url.contains("http")) {
+            throw new IllegalArgumentException("Url must contains http.");
+        }
+    }
+
     public enum Range {
-        TOP_LEFT,
-        TOP_CENTER,
-        TOP_RIGHT,
-        CENTER_LEFT,
-        CENTER_CENTER,
-        CENTER_RIGHT,
-        BOTTOM_LEFT,
-        BOTTOM_CENTER,
-        BOTTOM_RIGHT,
+        TOP_LEFT(1),
+        TOP_CENTER(2),
+        TOP_RIGHT(3),
+        CENTER_LEFT(4),
+        CENTER_CENTER(5),
+        CENTER_RIGHT(6),
+        BOTTOM_LEFT(7),
+        BOTTOM_CENTER(8),
+        BOTTOM_RIGHT(9);
+
+        private int index;
+
+        // 构造方法
+        Range(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return this.index;
+        }
     }
 
     /**
@@ -27,11 +76,13 @@ public class ALiImageURL {
      *
      * @param h 指定高度
      */
-    public void height(int h) {
+    public ALiImageURL height(int h) {
         if (h > 4096) {
             throw new IllegalArgumentException("h must in [1 , 4096].");
         }
-
+        this.h = h + "h";
+        this.height = h;
+        return this;
     }
 
     /**
@@ -41,10 +92,13 @@ public class ALiImageURL {
      *
      * @param w 指定宽度
      */
-    public void width(int w) {
-        if (w > 4096) {
+    public ALiImageURL width(int w) {
+        if (w < 1 || w > 4096) {
             throw new IllegalArgumentException("w must in [1 , 4096].");
         }
+        this.w = w + "w";
+        this.width = w;
+        return this;
 
     }
 
@@ -57,13 +111,14 @@ public class ALiImageURL {
      * 只能在jpg/png效果上使用，其他格式无效果。
      * 如果一个转换url里，即指定了q和Q，按Q来处理
      *
-     * @param q [1,100]
+     * @param Q [1,100]
      */
-    public void quality(int q) {
-        if (q < 1 || q > 100) {
+    public ALiImageURL quality(int Q) {
+        if (Q < 1 || Q > 100) {
             throw new IllegalArgumentException("q must in [1 , 100]");
         }
-
+        this.Q = Q + "Q";
+        return this;
     }
 
     /**
@@ -73,9 +128,10 @@ public class ALiImageURL {
      * @param w 指定目标缩略图的宽度 [1,4096]
      * @param h 指定目标缩略图的高度 [1,4096]
      */
-    public void resize(int w, int h) {
+    public ALiImageURL resize(int w, int h) {
         height(h);
         width(w);
+        return this;
     }
 
     /**
@@ -84,10 +140,9 @@ public class ALiImageURL {
      *
      * @param deal 值是1, 即不处理，是0，表示处理. 默认0-处理
      */
-    public void biggerOpt(boolean deal) {
-        if (deal) {
-
-        }
+    public ALiImageURL biggerOpt(boolean deal) {
+        this.l = (deal ? 0 : 1) + "l";
+        return this;
     }
 
     /**
@@ -112,8 +167,12 @@ public class ALiImageURL {
      *
      * @param priority 缩放策略 0:长边优先  1:短边优先  2:强制缩略
      */
-    public void zoomPriority(int priority) {
-
+    public ALiImageURL zoomPriority(int priority) {
+        if (priority < 0 || priority > 2) {
+            throw new IllegalArgumentException("priority must in [0 , 2].");
+        }
+        this.e = priority + "e";
+        return this;
     }
 
     /**
@@ -122,8 +181,13 @@ public class ALiImageURL {
      *
      * @param p 缩放比例
      */
-    public void percent(int p) {
+    public ALiImageURL percent(int p) {
+        if (p < 1 || p > 1000) {
+            throw new IllegalArgumentException("p must in [1 , 1000].");
+        }
+        this.p = p + "p";
 
+        return this;
     }
 
     /**
@@ -131,41 +195,46 @@ public class ALiImageURL {
      *
      * @param crop 0 不裁剪  1 裁剪
      */
-    public void crop(boolean crop) {
+    public ALiImageURL crop(boolean crop) {
+        this.c = (crop ? 1 : 0) + "c";
 
+        return this;
     }
 
     /**
      * 居中剪裁的图片，返回尺寸由w和h来订
      */
-    public void centerCrop() {
+    public ALiImageURL centerCrop() {
         crop(true);
         zoomPriority(1);
-
+        return this;
     }
 
     /**
      * 居中剪裁的图片，返回尺寸由w和h来订
      */
-    public void centerCrop(int w, int h) {
+    public ALiImageURL centerCrop(int w, int h) {
         resize(w, h);
         centerCrop();
-
+        return this;
     }
 
     /**
      * 按照长边缩放
      */
-    public void centerInside() {
+    public ALiImageURL centerInside() {
+        crop(true);
         zoomPriority(0);
+        return this;
     }
 
     /**
      * 按照长边缩放
      */
-    public void centerInside(int w, int h) {
+    public ALiImageURL centerInside(int w, int h) {
         resize(w, h);
         centerInside();
+        return this;
     }
 
     /**
@@ -179,8 +248,9 @@ public class ALiImageURL {
      * @param w 要裁剪的宽度
      * @param h 要裁剪的高度
      */
-    public void cropAdvanced(int x, int y, int w, int h) {
-
+    public ALiImageURL cropAdvanced(int x, int y, int w, int h) {
+        advancedCrop = x + "-" + y + "-" + w + "-" + h + "a";
+        return this;
     }
 
     /**
@@ -190,8 +260,9 @@ public class ALiImageURL {
      * @param x 起始点x坐标
      * @param y 起始点y坐标
      */
-    public void cropAdvanced(int x, int y) {
+    public ALiImageURL cropAdvanced(int x, int y) {
         cropAdvanced(x, y, 0, 0);
+        return this;
     }
 
     /**
@@ -209,8 +280,15 @@ public class ALiImageURL {
      * @param w     裁剪宽度 [0,4096]
      * @param h     裁剪高度 [0,4096]
      */
-    public void cropRange(Range range, int w, int h) {
-
+    public ALiImageURL cropRange(Range range, int w, int h) {
+        if (w < 0 || w > 4096) {
+            throw new IllegalArgumentException("w must in [0 , 4096].");
+        }
+        if (h < 0 || h > 4096) {
+            throw new IllegalArgumentException("h must in [0 , 4096].");
+        }
+        this.cropRange = w + "x" + h + "-" + range.getIndex() + "rc";
+        return this;
     }
 
     /**
@@ -220,15 +298,27 @@ public class ALiImageURL {
      * @param radius [1, 4096] 如果radius能指定圆的半径。 但是圆的的半径不能超过原图的最小边的一半。如果半径超过。圆的大小仍然是原圆的最大内切圆。
      * @param type   [0, 1] 0:表示图片最终大小仍然是原图大小 1: 表示图片最终大小是能包含这个圆的最小正方形
      */
-    public void circle(int radius, int type) {
+    public ALiImageURL circle(int radius, int type) {
+        if (radius < 1 || radius > 4096) {
+            throw new IllegalArgumentException("radius must in [1 , 4096].");
+        }
+        if (type < 0 || type > 1) {
+            throw new IllegalArgumentException("type must in [0 , 1].");
+        }
 
+        this.circle = radius + "-" + type + "ci";
+        return this;
     }
 
     /**
      * 自动切内圆，半径按照设置的宽度
      */
-    public void circle() {
-
+    public ALiImageURL circle() {
+        if (width < 0 && height < 0) {
+            throw new IllegalArgumentException("you must set w or h");
+        }
+        this.circle = Math.min(width / 2, height / 2) + "-" + "1ci";
+        return this;
     }
 
     /**
@@ -237,8 +327,13 @@ public class ALiImageURL {
      *
      * @param radius [1, 4096] radius指定圆角的半径。但是生成的最大圆角的的半径不能超过原图的最小边的一半。
      */
-    public void rounded(int radius) {
+    public ALiImageURL rounded(int radius) {
+        if (radius < 1 || radius > 4096) {
+            throw new IllegalArgumentException("radius must in [1 , 4096].");
+        }
 
+        this.rounded = radius + "-2ci";
+        return this;
     }
 
     /**
@@ -250,8 +345,13 @@ public class ALiImageURL {
      * @param length 切割长度 [1,切割边边长]，单位px。如果超出切割边的大小，返回原图
      * @param index  是表示块数。（0表示第一块）[0,最大块数)。如果超出最大块数，返回原图。
      */
-    public void cropIndex(int type, int length, int index) {
+    public ALiImageURL cropIndex(int type, int length, int index) {
+        if (type < 0 || type > 1) {
+            throw new IllegalArgumentException("type must in [0 , 1].");
+        }
 
+        this.cropIndex = length + (type == 0 ? "x" : "y") + "-" + index + "ic";
+        return this;
     }
 
 
@@ -263,13 +363,10 @@ public class ALiImageURL {
      * @param h     指定目标缩略图的高度 [1,4096]
      * @param color 填充色值
      */
-    public void zoomFillColor(int w, int h, int color) {
-        int red = Color.red(color);
-        int green = Color.green(color);
-        int blue = Color.blue(color);
-
-        //注意必须有4e这个参数
-
+    public ALiImageURL zoomFillColor(int w, int h, int color) {
+        resize(w, h);
+        zoomFillColor(color);
+        return this;
     }
 
     /**
@@ -279,66 +376,85 @@ public class ALiImageURL {
      *
      * @param color 填充色值
      */
-    public void zoomFillColor(int color) {
+    public ALiImageURL zoomFillColor(int color) {
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        //注意必须有4e这个参数
 
+        fitColor = "4e_" + red + "-" + green + "-" + blue + "bgc";
+        return this;
     }
 
     /**
      * 将原图保存成jpg格式，如果原图是png,webp, bmp存在透明通道，默认会把透明填充成黑色。如果想把透明填充成白色可以指定1wh参数
      */
-    public void jpg() {
-
+    public ALiImageURL jpg() {
+        this.format = ".jpg";
+        return this;
     }
 
     /**
      * @1pr.jpg
      */
-    public void progressJpg() {
-
+    public ALiImageURL progressJpg() {
+        this.format = "1pr.jpg";
+        return this;
     }
 
     /**
      * 将原图保存成png格式
      */
-    public void png() {
-
+    public ALiImageURL png() {
+        this.format = ".png";
+        return this;
     }
 
     /**
      * android 默认返回webp，如果调用noWebp则返回原图格式
      */
-    public void noWebp() {
-
+    public ALiImageURL noWebp() {
+        src();
+        return this;
     }
 
     /**
      * 将原图保存成webp格式
      */
-    public void webp() {
-
+    public ALiImageURL webp() {
+        this.format = ".wep";
+        return this;
     }
 
     /**
      * 将原图保存成bmp格式
      */
-    public void bmp() {
-
+    public ALiImageURL bmp() {
+        this.format = ".bmp";
+        return this;
     }
 
     /**
      * 按原图格式返回，如果原图是gif, 此时返回gif格式第一帧,保存成jpg格式，而非gif格式
      */
-    public void src() {
-
+    public ALiImageURL src() {
+        jpg();
+        return this;
     }
 
     /**
      * 可以对处理后的图片进行按顺时针旋转
+     * 90r
      *
      * @param angle [0, 360] 默认值 ：0(表示不旋转)
      */
-    public void rotate(int angle) {
+    public ALiImageURL rotate(int angle) {
 
+        if (angle < 0 || angle > 360) {
+            throw new IllegalArgumentException("type must in [0 , 360].");
+        }
+        this.angle = angle + "r";
+        return this;
     }
 
     /**
@@ -351,8 +467,9 @@ public class ALiImageURL {
      * <p/>
      * 本函数直接使用  2o
      */
-    public void autoRotate() {
-
+    public ALiImageURL autoRotate(int type) {
+        autoRotate = type + "o";
+        return this;
     }
 
     /**
@@ -361,8 +478,12 @@ public class ALiImageURL {
      *
      * @param value [50, 399]  表示进行锐化处理。取值为锐化参数，参数越大，越清晰。为达到较优效果，推荐取值为100
      */
-    public void sharpen(int value) {
-
+    public ALiImageURL sharpen(int value) {
+        if (value < 50 || value > 399) {
+            throw new IllegalArgumentException("value must in [50 , 399].");
+        }
+        this.sh = value + "sh";
+        return this;
     }
 
     /**
@@ -373,8 +494,15 @@ public class ALiImageURL {
      * @param radius 模糊半径 取值在 [1,50]， radius越大，越模糊
      * @param sigma  正态分布的标准差 取值 [1,50]，越大，越模糊
      */
-    public void blur(int radius, int sigma) {
-
+    public ALiImageURL blur(int radius, int sigma) {
+        if (radius < 1 || radius > 50) {
+            throw new IllegalArgumentException("radius must in [1 , 50].");
+        }
+        if (sigma < 1 || sigma > 50) {
+            throw new IllegalArgumentException("sigma must in [1 , 50].");
+        }
+        this.blur = radius + "-" + sigma + "bl";
+        return this;
     }
 
     /**
@@ -383,8 +511,14 @@ public class ALiImageURL {
      *
      * @param value [-100, 100]
      */
-    public void brightness(int value) {
+    public ALiImageURL brightness(int value) {
+        if (value < -100 || value > 100) {
+            throw new IllegalArgumentException("value must in [-100 , 100].");
+        }
 
+        this.brightness = value + "b";
+
+        return this;
     }
 
     /**
@@ -393,8 +527,13 @@ public class ALiImageURL {
      *
      * @param value [-100, 100]
      */
-    public void contrast(int value) {
+    public ALiImageURL contrast(int value) {
+        if (value < -100 || value > 100) {
+            throw new IllegalArgumentException("value must in [-100 , 100].");
+        }
 
+        this.contrast = value + "d";
+        return this;
     }
 
     /**
@@ -423,8 +562,9 @@ public class ALiImageURL {
      * "ImageWidth": {"value": "400"}
      * }
      */
-    public void infoexif() {
-
+    public ALiImageURL infoexif() {
+        this.infoexif = "infoexif";
+        return this;
     }
 
     /**
@@ -433,7 +573,55 @@ public class ALiImageURL {
      *
      * @param name 样式的名称
      */
-    public void setStyle(String name) {
+    public ALiImageURL setStyle(String name) {
         //@!name
+        this.style = "!" + name;
+        return this;
+    }
+
+    public String build() {
+        StringBuilder result = new StringBuilder();
+        result.append(getParams(w));
+        result.append(getParams(h));
+        result.append(getParams(l));
+        result.append(getParams(Q));
+        result.append(getParams(e));
+        result.append(getParams(p));
+        result.append(getParams(c));
+        result.append(getParams(cropRange));
+        result.append(getParams(circle));
+        result.append(getParams(rounded));
+        result.append(getParams(cropIndex));
+        result.append(getParams(fitColor));
+        result.append(getParams(angle));
+        result.append(getParams(autoRotate));
+        result.append(getParams(sh));
+        result.append(getParams(blur));
+        result.append(getParams(brightness));
+        result.append(getParams(contrast));
+        result.append(getParams(infoexif));
+        result.append(getParams(style));
+
+        if (result.lastIndexOf("_") == result.length() - 1) {
+            result.deleteCharAt(result.length() - 1);
+        }
+
+        if (!TextUtils.isEmpty(advancedCrop)) {
+            result.append("|");
+            result.append(advancedCrop);
+        }
+
+        if (result.lastIndexOf("_") == result.length() - 1) {
+            result.deleteCharAt(result.length() - 1);
+        }
+        result.append(format);
+        if (BuildConfig.DEBUG) {
+            Log.d("a li", "image url = " + result.toString());
+        }
+        return result.toString();
+    }
+
+    private String getParams(String value) {
+        return TextUtils.isEmpty(value) ? "" : (value + "_");
     }
 }
