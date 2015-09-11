@@ -18,6 +18,9 @@ public class MainActivity extends AppCompatActivity {
 
         imageView = (ImageView) findViewById(R.id.imageView);
 
-        Glide.with(this).load(new ALiImageURL("http://img.teamkn.com/i/gnFCPBrn.png").centerInside()).into(imageView);
+        Glide.with(this)
+                .load(new ALiImageURL("http://img.teamkn.com/i/gnFCPBrn.png")
+                        .centerInside())
+                .into(imageView);
     }
 }
