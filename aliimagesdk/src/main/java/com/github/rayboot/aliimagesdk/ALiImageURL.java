@@ -154,20 +154,19 @@ public class ALiImageURL {
 
     /**
      * 缩放策略
-     * <p/>
+     *
      * 默认值：0：长边（默认值）
      * 由于图片缩放过程中，原图尺寸与缩放尺寸不一定是相同比例，需要我们指定以长边还是短边优先进行缩放，
      * 如原图200 * 400（比例1:2），需要缩放为100 * 100（比例1:1）.
      * 长边优先时，缩放为50 100；短边优先时(e=1)，缩放为`100 200`，若不特别指定，则代表长边优先
-     * <p/>
+     *
      * 关于“长边”和“短边”的定义需要特别注意
      * 它们表达的是在缩放中相对比例的长或短。
      * “长边”是指原尺寸与目标尺寸的比值大的那条边；
      * “短边”同理。
-     * 如原图400 * 200，缩放为800 * 100，（400/800=0.5，200/100=2，0.5 < 2），所以在这个缩放中200那条是长边，400是短边。
-     * <p/>
+     *
      * 默认 长边优先  0e
-     * <p/>
+     *
      * 长边优先     0e
      * 短边优先     1e
      * 强制缩略     2e
@@ -175,6 +174,8 @@ public class ALiImageURL {
      * @param priority 缩放策略 0:长边优先  1:短边优先  2:强制缩略
      */
     public ALiImageURL zoomPriority(int priority) {
+        //     * 如原图400 * 200，缩放为800 * 100，(400 / 800 = 0.5，200 / 100 = 2，0.5 < 2)，所以在这个缩放中200那条是长边，400是短边。
+
         if (priority < 0 || priority > 2) {
             throw new IllegalArgumentException("priority must in [0 , 2].");
         }
@@ -274,7 +275,7 @@ public class ALiImageURL {
 
     /**
      * 用户可以指定对某一个区域进行裁剪。在这里把图片分成９个区域。
-     * 参数格式：<width>x<height>-<pos>rc.jpg
+     * 参数格式：width x height - pos rc.jpg
      * width 指的是裁剪的宽度[0, 4096]
      * Height 指的是裁剪的高度[0, 4096]
      * pos指的是裁剪区域,取值范围是[1,9],默认是左上角,区域数值对应表见下图
@@ -361,7 +362,7 @@ public class ALiImageURL {
 
     /**
      * 参数格式：100w_100h_4e_100-0-0bgc
-     * bgc 为 <red>-<green>-<blue>bgc
+     * bgc 为 red - green - blue bgc
      *
      * @param w     指定目标缩略图的宽度 [1,4096]
      * @param h     指定目标缩略图的高度 [1,4096]
@@ -376,7 +377,7 @@ public class ALiImageURL {
     /**
      * 如果前面已经调用了设置高度和宽度的方法，直接调用这个方法
      * 参数格式：100w_100h_4e_100-0-0bgc
-     * bgc 为 <red>-<green>-<blue>bgc
+     * bgc 为  red - green - blue bgc
      *
      * @param color 填充色值
      */
@@ -399,7 +400,7 @@ public class ALiImageURL {
     }
 
     /**
-     * @1pr.jpg
+     * 1pr.jpg
      */
     public ALiImageURL progressJpg() {
         this.format = "1pr.jpg";
@@ -465,11 +466,11 @@ public class ALiImageURL {
      * 根据exif里信息进行旋转
      * 参数形式 0o,1o,2o
      * 进行自动旋转
-     * 0：表示按原图默认方向，不进行自动旋转
-     * 1：表示根据图片的旋转参数，对图片进行自动旋转，如果存在缩略参数，是先进行缩略，再进行旋转。
-     * 2: 表示根据图片的旋转参数，对图片进行自动旋转，如果存在缩略参数，先进行旋转，再进行缩略
-     * <p/>
+     *
      * 本函数直接使用  2o
+     * @param type 0：表示按原图默认方向，不进行自动旋转
+     *             1：表示根据图片的旋转参数，对图片进行自动旋转，如果存在缩略参数，是先进行缩略，再进行旋转。
+     *             2: 表示根据图片的旋转参数，对图片进行自动旋转，如果存在缩略参数，先进行旋转，再进行缩略
      */
     public ALiImageURL autoRotate(int type) {
         autoRotate = type + "o";
@@ -543,7 +544,7 @@ public class ALiImageURL {
     /**
      * 获取文件exif信息以及图片info信息
      * infoexif 标签
-     * <p/>
+     *
      * 如果有exif
      * {
      * "DateTime": {"value": "2015:02:11 15:38:27"},
@@ -557,7 +558,7 @@ public class ALiImageURL {
      * "ImageWidth": {"value": "424"},
      * "Orientation": {"value": "7"}
      * }
-     * <p/>
+     *
      * 如果没有exif
      * {
      * "FileSize": {"value": "21839"},
@@ -574,7 +575,6 @@ public class ALiImageURL {
     /**
      * 样式
      * !pipe1
-     *
      * @param name 样式的名称
      */
     public ALiImageURL setStyle(String name) {
