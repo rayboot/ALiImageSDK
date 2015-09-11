@@ -1,4 +1,4 @@
-package com.github.rayboot.aliimagesdk;
+package com.github.rayboot.aliimagesdk.sample;
 
 import android.app.Application;
 
@@ -7,4 +7,9 @@ import android.app.Application;
  * email : sy0725work@gmail.com
  */
 public class App extends Application {
+
+    public static App app = new App();
+
+
+
 }

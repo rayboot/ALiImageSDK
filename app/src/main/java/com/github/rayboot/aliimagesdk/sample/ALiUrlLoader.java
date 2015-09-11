@@ -1,4 +1,4 @@
-package com.github.rayboot.aliimagesdk;
+package com.github.rayboot.aliimagesdk.sample;
 
 import android.content.Context;
 
@@ -8,6 +8,7 @@ import com.bumptech.glide.load.model.ModelCache;
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader;
+import com.github.rayboot.aliimagesdk.ALiImageURL;
 
 import java.io.InputStream;
 

@@ -20,5 +20,3 @@
     **[] $VALUES;
     public *;
 }
--keep class com.bumptech.glide.integration.volley.VolleyGlideModule
--keep class com.bumptech.glide.integration.okhttp.OkHttpGlideModule

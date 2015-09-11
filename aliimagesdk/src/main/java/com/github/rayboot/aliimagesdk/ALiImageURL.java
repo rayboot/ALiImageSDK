@@ -35,6 +35,7 @@ public class ALiImageURL {
     private String contrast;
     private String infoexif;
     private String style;
+    private boolean autoCircle = false;
 
     public ALiImageURL(String url) {
         url(url);
@@ -44,6 +45,7 @@ public class ALiImageURL {
         if (!url.contains("http")) {
             throw new IllegalArgumentException("Url must contains http.");
         }
+        this.url = url;
     }
 
     public enum Range {
@@ -129,8 +131,13 @@ public class ALiImageURL {
      * @param h 指定目标缩略图的高度 [1,4096]
      */
     public ALiImageURL resize(int w, int h) {
-        height(h);
-        width(w);
+        if (this.width < 0 || this.height < 0) {
+            height(h);
+            width(w);
+        }
+        if (autoCircle) {
+            this.circle = Math.min(width / 2, height / 2) + "-" + "1ci";
+        }
         return this;
     }
 
@@ -314,10 +321,7 @@ public class ALiImageURL {
      * 自动切内圆，半径按照设置的宽度
      */
     public ALiImageURL circle() {
-        if (width < 0 && height < 0) {
-            throw new IllegalArgumentException("you must set w or h");
-        }
-        this.circle = Math.min(width / 2, height / 2) + "-" + "1ci";
+        autoCircle = true;
         return this;
     }
 
@@ -581,6 +585,8 @@ public class ALiImageURL {
 
     public String build() {
         StringBuilder result = new StringBuilder();
+        result.append(url);
+        result.append("@");
         result.append(getParams(w));
         result.append(getParams(h));
         result.append(getParams(l));
@@ -615,9 +621,9 @@ public class ALiImageURL {
             result.deleteCharAt(result.length() - 1);
         }
         result.append(format);
-        if (BuildConfig.DEBUG) {
-            Log.d("a li", "image url = " + result.toString());
-        }
+//        if (BuildConfig.DEBUG) {
+            Log.d("ali", "image url = " + result.toString());
+//        }
         return result.toString();
     }
 
